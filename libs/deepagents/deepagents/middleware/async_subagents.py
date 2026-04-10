@@ -289,10 +289,12 @@ def _build_start_tool(
         try:
             client = clients.get_sync(subagent_type)
             thread = client.threads.create()
+            context_kwargs = {"context": runtime.context} if runtime.context is not None else {}
             run = client.runs.create(
                 thread_id=thread["thread_id"],
                 assistant_id=spec["graph_id"],
                 input={"messages": [{"role": "user", "content": description}]},
+                **context_kwargs,
             )
         except Exception as e:  # noqa: BLE001  # LangGraph SDK raises untyped errors
             logger.warning("Failed to launch async subagent '%s': %s", subagent_type, e)
@@ -329,10 +331,12 @@ def _build_start_tool(
         try:
             client = clients.get_async(subagent_type)
             thread = await client.threads.create()
+            context_kwargs = {"context": runtime.context} if runtime.context is not None else {}
             run = await client.runs.create(
                 thread_id=thread["thread_id"],
                 assistant_id=spec["graph_id"],
                 input={"messages": [{"role": "user", "content": description}]},
+                **context_kwargs,
             )
         except Exception as e:  # noqa: BLE001  # LangGraph SDK raises untyped errors
             logger.warning("Failed to launch async subagent '%s': %s", subagent_type, e)
